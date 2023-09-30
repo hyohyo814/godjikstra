@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"math/rand"
+	"strconv"
 	"time"
 )
 
@@ -11,25 +12,45 @@ const (
 	Height = 4
 )
 
-
 type Graph map[string]map[string]int
 
+func keyString(num1 int, num2 int) string {
+	key := strconv.Itoa(num1) + "," + strconv.Itoa(num2)
+	return key
+}
+
+func add(m Graph, path, target string) {
+	mm, exist := m[path]
+	if !exist {
+		mm = make(map[string]int)
+		m[path] = mm
+	}
+	mm[target] = 1
+}
+
 func generateGraphMap(grid [][]bool) {
+	m := make(map[string]map[string]int, Height)
 	for i, _ := range grid {
 		for j, _ := range grid[i] {
 			if j == len(grid[i])-1 {
-				fmt.Printf("%v, %v: reached row end\n",i,j)
+				fmt.Printf("%v, %v: reached row end\n", i, j)
 				break
 			}
-			if grid[i][j+1] == true {
-				fmt.Printf("%v, %v: wall encountered ahead\n",i,j)
-				break
-			} 
+			if grid[i][j+1] == false {
+				fmt.Printf("%v, %v: valid space ahead\n", i, j)
+				key := keyString(i, j)
+				target := keyString(i, j+1)
+				add(m, key, target)	
+				fmt.Println(m)
+
+			} else if grid[i][j+1] == true {
+				fmt.Printf("%v, %v: wall encountered ahead\n", i, j)
+			}
 			if i < len(grid)-1 {
-				if grid[i+1][j] == true {
-					fmt.Printf("%v, %v: wall encountered below\n",i,j)
+				if grid[i+1][j] == false {
+					fmt.Printf("%v, %v: valid space below\n", i, j)
 				}
-			} 
+			}
 
 		}
 	}
