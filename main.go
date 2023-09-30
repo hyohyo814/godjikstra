@@ -28,7 +28,7 @@ func add(m Graph, path, target string) {
 	mm[target] = 1
 }
 
-func generateGraphMap(grid [][]bool) {
+func generateGraphMap(grid [][]bool) Graph {
 	m := make(map[string]map[string]int, Height)
 	for i, _ := range grid {
 		for j, _ := range grid[i] {
@@ -40,8 +40,7 @@ func generateGraphMap(grid [][]bool) {
 				fmt.Printf("%v, %v: valid space ahead\n", i, j)
 				key := keyString(i, j)
 				target := keyString(i, j+1)
-				add(m, key, target)	
-				fmt.Println(m)
+				add(m, key, target)
 
 			} else if grid[i][j+1] == true {
 				fmt.Printf("%v, %v: wall encountered ahead\n", i, j)
@@ -49,11 +48,15 @@ func generateGraphMap(grid [][]bool) {
 			if i < len(grid)-1 {
 				if grid[i+1][j] == false {
 					fmt.Printf("%v, %v: valid space below\n", i, j)
+					key := keyString(i, j)
+					target := keyString(i+1, j)
+					add(m, key, target)
 				}
 			}
 
 		}
 	}
+	return m
 }
 
 func generateMap() [][]bool {
@@ -94,6 +97,8 @@ func printMap(grid [][]bool) {
 func main() {
 	mapGrid := generateMap()
 	printMap(mapGrid)
-	generateGraphMap(mapGrid)
-	fmt.Println(mapGrid)
+	graphMap := generateGraphMap(mapGrid)
+	for i, v := range graphMap {
+		fmt.Println(i, v)
+	}
 }
